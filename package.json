@@ -1,0 +1,33 @@
+{
+  "name": "tipos",
+  "version": "0.0.1",
+  "description": "PropType all the things!",
+  "main": "index.js",
+  "scripts": {
+    "test": "cucumber.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mjlescano/tipos.git"
+  },
+  "keywords": [
+    "type",
+    "checker",
+    "proptypes",
+    "types",
+    "typescript"
+  ],
+  "author": "mjlescano",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/mjlescano/tipos/issues"
+  },
+  "homepage": "https://github.com/mjlescano/tipos#readme",
+  "engines": {
+    "node": "8",
+    "npm": "5"
+  },
+  "devDependencies": {
+    "cucumber": "~3.0.1"
+  }
+}
