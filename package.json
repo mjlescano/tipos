@@ -29,5 +29,8 @@
   },
   "devDependencies": {
     "cucumber": "~3.0.1"
+  },
+  "dependencies": {
+    "react-schema": "^2.0.0"
   }
 }
