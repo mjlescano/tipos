@@ -1,15 +1,17 @@
 Feature: Define function types
 
-  As a developer using tipos
-  I want to check the types of arguments and return value of my functions when are called
-  So that I can be sure that I use them correctly
+As a developer using "tipos"
+I want to define the types of arguments and return values of my functions
+So that I can be sure that I use them correctly
 
-  Scenario: Calling with no args and no return value
-    Given a function that takes no args and returns void
-    When called with no args
-    Then it should return void
+Scenario: Simple function correctly called
+Given a function that takes no arguments
+And returns undefined
+When called with no arguments
+Then it returns undefined
 
-  Scenario: Calling with no args and no return value
-    Given a function that takes no args and returns void
-    When called with no args
-    Then it should return void
+Scenario: Simple function wrongly called
+Given a function that takes no arguments
+And returns undefined
+When called with argument 1
+Then it throws an InvalidValueError
