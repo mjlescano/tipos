@@ -27,8 +27,8 @@ function createInterface (argsTypes = [], returnType = undefined) {
 
   return function wrapInterface (fn) {
     return function validateInterface (...args) {
-      if (argsTypes.length === 0 && args.length > 0) {
-        throw new InvalidArgumentValueError(undefined, undefined)
+      if (argsTypes.length === 0 && hasValues(args)) {
+        throw new InvalidArgumentValueError(undefined, args)
       }
 
       argsTypes.forEach((argType, index) => {
@@ -48,6 +48,10 @@ function createInterface (argsTypes = [], returnType = undefined) {
       return result
     }
   }
+}
+
+function hasValues (arr = []) {
+  return arr.filter((val) => val !== undefined).length > 0
 }
 
 module.exports = function tipos (...argsTypes) {

@@ -3,38 +3,68 @@ const { defineSupportCode } = require('cucumber')
 const tipos = require('../../src')
 const validators = require('../../src/validators')
 
-defineSupportCode(({ Given, When, Then }) => {
-  Given('a function that takes( no) argument(s)', () => {
-    this.Types = tipos()
+const mock = {
+  String: () => '',
+  Number: () => 2,
+  Date: () => new Date(),
+  Array: () => [],
+  Object: () => {},
+  Function: () => () => {},
+  undefined: () => undefined
+}
+
+defineSupportCode(({ defineParameterType, Given, When, Then }) => {
+  defineParameterType({
+    typeName: 'validators',
+    regexp: /nothing|\((.+)\)/,
+    transformer: (str) => {
+      if (!str) return [undefined]
+      return str.split(', ')
+    }
   })
 
-  Given('returns( a)( an) {word}', (type) => {
-    this.Types = this.Types.returns(type)
+  defineParameterType({
+    typeName: 'validator',
+    regexp: /(nothing|.+)/,
+    transformer: (str) => {
+      if (str === 'nothing') return undefined
+      return str
+    }
   })
 
-  When('called with no arguments', () => {
+  defineParameterType({
+    typeName: 'arguments',
+    regexp: /no arguments|\((.+)\)/,
+    transformer: (str) => {
+      if (!str) return [undefined]
+      return JSON.parse(`[${str}]`)
+    }
+  })
+
+  Given('(a function that )takes {validators}', (types) => {
+    this.Types = tipos(...types)
     this.fn = this.Types(() => {})
+  })
 
+  Given('(a function that )returns {validator}', (type) => {
+    this.Types = this.Types.returns(type)
+    this.fn = this.Types(() => mock[type]())
+  })
+
+  When('called with {arguments}', (args) => {
+    this.args = args
+  })
+
+  Then('it returned( a) {validator}', (type) => {
+    const result = this.fn(...this.args)
+    assert(validators[type](result))
+  })
+
+  Then('it threw {word}', (errorName) => {
     try {
-      this.result = this.fn()
+      this.fn(...this.args)
     } catch (err) {
-      this.err = err
+      assert.equal(err.name, errorName)
     }
-  })
-
-  When('called with argument {int}', (int) => {
-    try {
-      this.result = this.fn(int)
-    } catch (err) {
-      this.err = err
-    }
-  })
-
-  Then('it returns( a)( an) {word}', (type) => {
-    assert(validators[type](this.result))
-  })
-
-  Then('it throws( an) {word}', (errorName) => {
-    assert.equal(this.err.name, errorName)
   })
 })

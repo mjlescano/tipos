@@ -30,7 +30,7 @@ class InvalidReturnTypeError extends Error {
 
 class InvalidArgumentValueError extends Error {
   constructor (expectedType, givenValue) {
-    const message = `Invalid argument given. Expected a values of type ${expectedType} and given ${givenValue}.`
+    const message = `Invalid argument given. Expected a value of type ${expectedType} and given ${givenValue}.`
     super(message)
 
     this.name = this.constructor.name
@@ -45,7 +45,7 @@ class InvalidArgumentValueError extends Error {
 
 class InvalidReturnValueError extends Error {
   constructor (expectedType, givenValue) {
-    const message = `Invalid function return value. Expected a values of type ${expectedType} and given ${givenValue}.`
+    const message = `Invalid function return value. Expected a value of type ${expectedType} and given ${givenValue}.`
     super(message)
 
     this.name = this.constructor.name
