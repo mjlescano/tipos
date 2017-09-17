@@ -26,6 +26,10 @@ function createInterface (argsTypes = [], returnType = undefined) {
   }
 
   return function wrapInterface (fn) {
+    if (typeof fn !== 'function') {
+      throw new Error('Only functions can be wrapped')
+    }
+
     return function validateInterface (...args) {
       if (argsTypes.length === 0 && hasValues(args)) {
         throw new InvalidArgumentValueError(undefined, args)
