@@ -1,7 +1,9 @@
 const validators = require('./validators')
 const {
-  InvalidTypeError,
-  InvalidValueError
+  InvalidArgumentTypeError,
+  InvalidReturnTypeError,
+  InvalidArgumentValueError,
+  InvalidReturnValueError
 } = require('./errors')
 
 /*
@@ -12,45 +14,35 @@ module.exports = Types((string, theNumber) => {
 })
 */
 
-module.exports = function tipos (...argsTypes) {
-  const interfaze = createInterface(argsTypes)
-
-  interfaze.returns = function returns (returnType) {
-    return createInterface(argsTypes, returnType)
-  }
-
-  return interfaze
-}
-
 function createInterface (argsTypes = [], returnType = undefined) {
   for (const argType of argsTypes) {
     if (!validators.hasOwnProperty(argType)) {
-      throw new InvalidTypeError(argType)
+      throw new InvalidArgumentTypeError(argType)
     }
   }
 
   if (!validators.hasOwnProperty(returnType)) {
-    throw new InvalidTypeError(returnType)
+    throw new InvalidReturnTypeError(returnType)
   }
 
   return function wrapInterface (fn) {
     return function validateInterface (...args) {
       if (argsTypes.length === 0 && args.length > 0) {
-        throw new InvalidValueError(undefined, undefined)
+        throw new InvalidArgumentValueError(undefined, undefined)
       }
 
       argsTypes.forEach((argType, index) => {
         const value = args[index]
 
         if (!validators[argType](value)) {
-          throw new InvalidValueError(argType, value)
+          throw new InvalidArgumentValueError(argType, value)
         }
       })
 
       const result = fn(...args)
 
       if (!validators[returnType](result)) {
-        throw new InvalidValueError(returnType, result)
+        throw new InvalidReturnValueError(returnType, result)
       }
 
       return result
@@ -58,4 +50,15 @@ function createInterface (argsTypes = [], returnType = undefined) {
   }
 }
 
+module.exports = function tipos (...argsTypes) {
+  const Types = createInterface(argsTypes)
+
+  Types.returns = function returns (returnType) {
+    return createInterface(argsTypes, returnType)
+  }
+
+  return Types
+}
+
 module.exports.createInterface = createInterface
+module.exports.validators = validators

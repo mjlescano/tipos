@@ -14,4 +14,4 @@ Scenario: Simple function wrongly called
 Given a function that takes no arguments
 And returns undefined
 When called with argument 1
-Then it throws an InvalidValueError
+Then it throws an InvalidArgumentValueError
