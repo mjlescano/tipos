@@ -24,14 +24,12 @@ const sumTypes = tipos(Number, Number).returns(Number)
 const sum = sumTypes((a, b) => a + b)
 
 // now, you can safely call it:
-
 const result = sum(1, 3) // 4
 
 // if you call it in a way that is not intended, it will throw an InvalidArgumentValueError error
-
 try {
   const result = sum('some-string', 3)
-} catch(err) {
+} catch (err) {
   // InvalidArgumentValueError
 }
 ```
@@ -39,7 +37,6 @@ try {
 ## TODOs
 - [ ] Add API docs
 - [ ] Transpilate with Babel
-- [ ] Add optional parameters
-- [ ] Add enum/anyOf parameters
 - [ ] Add typed array parameter
 - [ ] Add objects with shape validation
+- [ ] Add global disable

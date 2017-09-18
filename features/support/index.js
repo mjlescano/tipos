@@ -4,8 +4,8 @@ const tipos = require('../../src')
 const validators = require('../../src/validators')
 
 const mock = {
-  String: () => '',
-  Number: () => 2,
+  String: () => Math.random().toString(),
+  Number: () => Math.random(),
   Date: () => new Date(),
   Array: () => [],
   Object: () => {},
@@ -25,7 +25,7 @@ defineSupportCode(({ defineParameterType, Given, When, Then }) => {
 
   defineParameterType({
     typeName: 'validator',
-    regexp: /(nothing|.+)/,
+    regexp: /nothing|([?\w\d]+)/,
     transformer: (str) => {
       if (str === 'nothing') return undefined
       return str
@@ -53,6 +53,10 @@ defineSupportCode(({ defineParameterType, Given, When, Then }) => {
 
   When('called with {arguments}', (args) => {
     this.args = args
+  })
+
+  When('returns value of type {validator}', (type) => {
+    this.fn = this.Types(() => mock[type]())
   })
 
   Then('it returned( a) {validator}', (type) => {

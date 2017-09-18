@@ -1,3 +1,4 @@
+const { hasValues } = require('./utils')
 const validators = require('./validators')
 const {
   InvalidArgumentTypeError,
@@ -6,22 +7,14 @@ const {
   InvalidReturnValueError
 } = require('./errors')
 
-/*
-const Types = tipos(String, Number).returns(undefined)
-
-module.exports = Types((string, theNumber) => {
-  console.log(string, theNumber)
-})
-*/
-
 function createInterface (argsTypes = [], returnType = undefined) {
   for (const argType of argsTypes) {
-    if (!validators.hasOwnProperty(argType)) {
+    if (!validateType(argType)) {
       throw new InvalidArgumentTypeError(argType)
     }
   }
 
-  if (!validators.hasOwnProperty(returnType)) {
+  if (!validateType(returnType)) {
     throw new InvalidReturnTypeError(returnType)
   }
 
@@ -38,14 +31,14 @@ function createInterface (argsTypes = [], returnType = undefined) {
       argsTypes.forEach((argType, index) => {
         const value = args[index]
 
-        if (!validators[argType](value)) {
+        if (!validate(argType, value)) {
           throw new InvalidArgumentValueError(argType, value)
         }
       })
 
       const result = fn(...args)
 
-      if (!validators[returnType](result)) {
+      if (!validate(returnType, result)) {
         throw new InvalidReturnValueError(returnType, result)
       }
 
@@ -54,8 +47,34 @@ function createInterface (argsTypes = [], returnType = undefined) {
   }
 }
 
-function hasValues (arr = []) {
-  return arr.filter((val) => val !== undefined).length > 0
+function getTypes (type) {
+  if (typeof type === 'string') {
+    let hasOptional = false
+
+    const types = type.split('|').map((type) => {
+      if (type.endsWith('?')) {
+        hasOptional = true
+        return type.slice(0, -1)
+      }
+
+      return type
+    })
+
+    if (hasOptional) types.push(undefined)
+
+    return types
+  } else {
+    return [type]
+  }
+}
+
+function validateType (type) {
+  const types = getTypes(type)
+  return types.every((type) => validators.hasOwnProperty(type))
+}
+
+function validate (type, value) {
+  return getTypes(type).some((type) => validators[type](value))
 }
 
 module.exports = function tipos (...argsTypes) {
@@ -68,5 +87,8 @@ module.exports = function tipos (...argsTypes) {
   return Types
 }
 
-module.exports.createInterface = createInterface
-module.exports.validators = validators
+Object.assign(module.exports, {
+  createInterface,
+  validators,
+  validate
+})
